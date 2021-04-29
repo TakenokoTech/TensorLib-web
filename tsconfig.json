@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es5",
+    "module": "ES2020",
+    "outDir": "./dist/",
+    "rootDir": "./TensorLib/src/",
+    "declaration": true,
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["./TensorLib/src/**/*.ts"],
+  "exclude": ["./TensorLib/src/**/*.spec.ts"]
+}
