@@ -2,13 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"></link>
+    <link href="app.css" rel="stylesheet"></link>
 </head>
-<body>
-    <img id="sample_image" width="100" src="./coffee.jpeg" alt="">
-    <input type="file" id="upload_image" accept="image/*" onchange="changedImage(this);"><br>
-    <div id="predict_result"></div>
 
+<body>
+    <header>
+        <nav class="navbar navbar-dark bg-dark shadow-sm" style="background-color: #e3f2fd;">
+            <div class="container">
+                <a class="navbar-brand" href="#">TensorLib Sample</a>
+            </div>
+        </nav>
+    </header>
+    <main class="my-5 text-center main">
+        <img id="sample_image" class="mb-4" width="100" src="./coffee.jpeg" alt="">
+        <br/>
+        <label class="mb-4" >
+            <span class="btn btn btn-outline-secondary">ファイル選択
+                <input type="file" id="upload_image" accept="image/*" onchange="changedImage(this);" style="display:none"/>
+            </span>
+        </label>
+
+        <div id="predict_result">　</div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="../dist/tensor-lib.js"></script>
     <script type="text/javascript" src="./app.js"></script>
 </body>
