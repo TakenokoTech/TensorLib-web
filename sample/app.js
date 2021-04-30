@@ -12,4 +12,10 @@ Firearm.setup({
 })
 
 const img = document.getElementById('sample_image');
-Firearm.predict("mobilenet", img)
+const result = Firearm.predict("mobilenet", img)
+
+result.then(it => {
+    console.log(it[0])
+    console.log(it[1])
+    console.log(it[2])
+})

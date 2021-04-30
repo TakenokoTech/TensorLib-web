@@ -8,14 +8,15 @@ import {InputImage} from "../FirearmConfig";
 export class PredictRepository {
     model: tfconv.GraphModel | undefined = undefined;
 
-    async setup(modelUrl: string, inputType: InputType) {
+    async setup(modelUrl: string) {
         await tf.setBackend("wasm")
-        console.log(tf.getBackend());
         this.model = await loadGraphModel(modelUrl);
+    }
 
+    async dryrun(inputType: InputType) {
         const result = tf.tidy(() => this.model?.predict(tf.zeros([1, inputType.inputSize, inputType.inputSize, 3]))) as tf.Tensor;
         const data = await result.data()
-        if(data.length > 0) console.log("ready!");
+        if(data.length < 1) console.error("not ready!!");
         result.dispose();
     }
 
@@ -30,7 +31,6 @@ export class PredictRepository {
 
             let resized = normalized;
             if (image.shape[0] !== inputType.inputSize || image.shape[1] !== inputType.inputSize) {
-                console.log("resized")
                 resized = tf.image.resizeBilinear(normalized, [inputType.inputSize, inputType.inputSize], true);
             }
 
