@@ -3,7 +3,7 @@ import {PredictTensorFlowUsecase} from "./domain/PredictTensorFlowUsecase";
 import {DownloadModelUsecase} from "./domain/DownloadModelUsecase";
 
 export class Firearm {
-    setup(config: FirearmConfig) {
+    setup(config: FirearmConfig): Promise<any> {
         console.log("setup")
         const configImpl = new FirearmConfigImpl(config)
         if(!configImpl.isReady()) throw Error("error in FirearmConfig.")
@@ -15,4 +15,3 @@ export class Firearm {
         return new PredictTensorFlowUsecase().execute(image, modelName, {inputSize: 224})
     }
 }
-

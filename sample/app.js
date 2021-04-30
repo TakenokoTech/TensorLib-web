@@ -9,7 +9,7 @@ Firearm.setup({
         name: "mobilenet",
         path: "tensorflow/examples/master/lite/examples/image_classification/android/models/src/main/assets/labels.txt"
     }]
-})
+}).then(predict)
 
 function predict() {
     const img = document.getElementById('sample_image');
@@ -29,5 +29,3 @@ function changedImage(obj) {
     fileReader.readAsDataURL(obj.files[0])
     predict()
 }
-
-predict()

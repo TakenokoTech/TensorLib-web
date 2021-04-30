@@ -7,10 +7,11 @@ export class ModelRepository {
     private local = new LocalModelDatasource()
     private network = new NetworkModelDatasource()
 
-    async download(modelName: string, modelPath: string) {
+    async download(modelName: string, modelPath: string): Promise<boolean> {
         const model = await loadGraphModel(modelPath);
         await model.save("indexeddb://" + modelName)
         model.dispose()
+        return Promise.resolve(true)
     }
 
     async _download(modelName: string, modelPath: string) : Promise<void> {
