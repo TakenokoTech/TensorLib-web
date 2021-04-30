@@ -8,8 +8,8 @@ export interface FirearmConfig {
 }
 
 interface Model{
-    name: String,
-    path: String
+    name: string,
+    path: string
 }
 
 export class FirearmConfigImpl implements FirearmConfig {

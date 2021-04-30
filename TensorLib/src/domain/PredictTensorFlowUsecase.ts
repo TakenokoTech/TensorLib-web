@@ -3,20 +3,16 @@ import {InputImage} from "../FirearmConfig";
 import * as tf from "@tensorflow/tfjs-core";
 import {toArray} from "../utils/ArrayUtils";
 import {classes} from "../model/classes";
+import InputType from "../model/InputType";
 
 export class PredictTensorFlowUsecase {
 
     predictRepository = new PredictRepository()
 
-    async execute(image: InputImage) {
+    async execute(image: InputImage, modelName: string, setting: InputType) {
         console.log("PredictTensorFlowUsecase.execute()")
-
-        const setting = {inputSize: 224}
-        await this.predictRepository.setup(
-            'https://storage.googleapis.com/tfjs-models/savedmodel/mobilenet_v2_1.0_224/model.json',
-        )
+        await this.predictRepository.setup(modelName)
         await this.predictRepository.dryrun(setting)
-
         const predictResult = await this.predictRepository.predict(image, setting)
 
         const softmax = tf.softmax(predictResult);

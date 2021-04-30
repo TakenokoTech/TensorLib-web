@@ -1,16 +1,20 @@
 import "@tensorflow/tfjs-backend-wasm"
 import * as tfconv from "@tensorflow/tfjs-converter";
 import * as tf from "@tensorflow/tfjs-core";
-import {loadGraphModel} from "@tensorflow/tfjs";
+import {loadGraphModel, loadLayersModel} from "@tensorflow/tfjs";
 import InputType from "../model/InputType";
 import {InputImage} from "../FirearmConfig";
 
 export class PredictRepository {
     model: tfconv.GraphModel | undefined = undefined;
 
-    async setup(modelUrl: string) {
-        await tf.setBackend("wasm")
-        this.model = await loadGraphModel(modelUrl);
+    async setup(modelName: string): Promise<boolean> {
+        try {
+            await tf.setBackend("wasm")
+            this.model = await loadGraphModel("indexeddb://" + modelName);
+        } catch (e) {
+            return false
+        }
     }
 
     async dryrun(inputType: InputType) {

@@ -5,18 +5,14 @@ import {DownloadModelUsecase} from "./domain/DownloadModelUsecase";
 export class Firearm {
     setup(config: FirearmConfig) {
         console.log("setup")
-
         const configImpl = new FirearmConfigImpl(config)
-        if(!configImpl.isReady()) {
-            throw Error("error in FirearmConfig.")
-        }
-
-        setTimeout(() => new DownloadModelUsecase().execute(config), 1000)
+        if(!configImpl.isReady()) throw Error("error in FirearmConfig.")
+        return new DownloadModelUsecase().execute(config)
     }
 
-    predict(modelName: String, image: InputImage): Promise<any> {
+    predict(modelName: string, image: InputImage): Promise<any> {
         console.log("predict")
-        return new PredictTensorFlowUsecase().execute(image)
+        return new PredictTensorFlowUsecase().execute(image, modelName, {inputSize: 224})
     }
 }
 
