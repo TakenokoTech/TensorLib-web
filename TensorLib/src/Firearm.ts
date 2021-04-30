@@ -1,5 +1,5 @@
-import {FirearmConfig, FirearmConfigImpl} from "./FirearmConfig";
-import {DownloadModelUsecase} from "./domain/DownloadModelUsecase";
+import {FirearmConfig, FirearmConfigImpl, InputImage} from "./FirearmConfig";
+import {PredictTensorFlowUsecase} from "./domain/PredictTensorFlowUsecase";
 
 export class Firearm {
     setup(config: FirearmConfig) {
@@ -10,9 +10,14 @@ export class Firearm {
             throw Error("error in FirearmConfig.")
         }
 
-        setTimeout(() => {
-            new DownloadModelUsecase().execute(config)
-        }, 1000)
+        // setTimeout(() => {
+        //     new DownloadModelUsecase().execute(config)
+        // }, 1000)
+    }
+
+    predict(modelName: String, image: InputImage): Promise<any> {
+        console.log("predict")
+        return new PredictTensorFlowUsecase().execute(image)
     }
 }
 

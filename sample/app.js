@@ -10,3 +10,6 @@ Firearm.setup({
         path: "tensorflow/examples/master/lite/examples/image_classification/android/models/src/main/assets/labels.txt"
     }]
 })
+
+const img = document.getElementById('sample_image');
+Firearm.predict("mobilenet", img)

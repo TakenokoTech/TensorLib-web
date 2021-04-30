@@ -5,9 +5,10 @@
     "module": "ES2020",
     "outDir": "./dist/",
     "rootDir": "./TensorLib/src/",
-    "declaration": true,
-    "strict": true,
-    "esModuleInterop": true
+    // "declaration": true,
+    // "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   },
   "include": ["./TensorLib/src/**/*.ts"],
   "exclude": ["./TensorLib/src/**/*.spec.ts"]
