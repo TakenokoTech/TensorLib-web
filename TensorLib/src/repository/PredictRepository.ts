@@ -11,7 +11,8 @@ export class PredictRepository {
     async setup(modelName: string): Promise<boolean> {
         try {
             await tf.setBackend("wasm")
-            this.model = await loadGraphModel("indexeddb://" + modelName);
+            this.model = await loadGraphModel("indexeddb://" + modelName)
+            return true
         } catch (e) {
             return false
         }

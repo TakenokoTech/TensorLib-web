@@ -7,7 +7,7 @@ import InputType from "../model/InputType";
 
 export class PredictTensorFlowUsecase {
 
-    predictRepository = new PredictRepository()
+    private predictRepository = new PredictRepository()
 
     async execute(image: InputImage, modelName: string, setting: InputType) {
         console.log("PredictTensorFlowUsecase.execute()")

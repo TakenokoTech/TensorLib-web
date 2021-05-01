@@ -8,12 +8,13 @@ export class ModelRepository {
     private network = new NetworkModelDatasource()
 
     async download(modelName: string, modelPath: string): Promise<boolean> {
-        const model = await loadGraphModel(modelPath);
+        const model = await loadGraphModel(modelPath, { fromTFHub: modelPath.indexOf("tfhub.dev") != -1});
         await model.save("indexeddb://" + modelName)
         model.dispose()
         return Promise.resolve(true)
     }
 
+    /** @deprecated */
     async _download(modelName: string, modelPath: string) : Promise<void> {
         const responseBody = await this.network.getTfhubRaw(modelPath)
         await this.local.deleteModel(modelName)

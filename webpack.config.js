@@ -4,7 +4,7 @@ const copy = require('copy-webpack-plugin');
 module.exports = {
     mode: "development",
     devtool: 'inline-source-map',
-    entry: "./TensorLib/src/Firearm.ts",
+    entry: "./TensorLib/src/index.ts",
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "tensor-lib.js",

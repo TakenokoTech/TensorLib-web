@@ -2,14 +2,14 @@ import * as tf from "@tensorflow/tfjs-core";
 
 export type InputImage = tf.Tensor | ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
 
+interface Model {
+    name: string,
+    path: string
+}
+
 export interface FirearmConfig {
     usedModelList: Model[]
     usedLabelList: Model[]
-}
-
-interface Model{
-    name: string,
-    path: string
 }
 
 export class FirearmConfigImpl implements FirearmConfig {
