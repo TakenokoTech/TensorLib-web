@@ -24,8 +24,15 @@
                 <input type="file" id="upload_image" accept="image/*" onchange="changedImage(this);" style="display:none"/>
             </span>
         </label>
-
         <div id="predict_result">　</div>
+    </main>
+
+    <main class="my-5 text-center main">
+        <div class="mb-3">
+            <label for="form_text" class="form-label">Text</label>
+            <input class="form-control" id="form_text" onchange="changedText(this);" placeholder="sample">
+        </div>
+        <div id="predict_result2">　</div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>

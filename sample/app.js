@@ -10,21 +10,31 @@ Firearm.setup({
     }, {
         name: "mobilenet3",
         path: "https://tfhub.dev/google/tfjs-model/imagenet/mobilenet_v1_100_192/classification/3/default/1"
+    }, {
+        name: "toxicity",
+        path: "https://tfhub.dev/tensorflow/tfjs-model/toxicity/1/default/1"
     }],
     usedLabelList: [{
         name: "mobilenet",
         path: "tensorflow/examples/master/lite/examples/image_classification/android/models/src/main/assets/labels.txt"
     }]
 }).then(() => {
-    predict("mobilenet1")
-    predict("mobilenet2")
-    predict("mobilenet3")
+    // predict("mobilenet1")
+    // predict("mobilenet2")
+    // predict("mobilenet3")
+
+    Firearm.predictText("toxicity", "fack").then(it => {
+        console.log("===" + modelName + "===")
+        console.log(it[0])
+        console.log(it[1])
+        console.log(it[2])
+        document.getElementById("predict_result").innerHTML = it[0].label;
+    })
 })
 
 function predict(modelName = "mobilenet1") {
     const img = document.getElementById('sample_image');
-    const result = Firearm.predict(modelName, img)
-    result.then(it => {
+    Firearm.predict(modelName, img).then(it => {
         console.log("===" + modelName + "===")
         console.log(it[0])
         console.log(it[1])
@@ -41,4 +51,15 @@ function changedImage(obj) {
     predict("mobilenet1")
     predict("mobilenet2")
     predict("mobilenet3")
+}
+
+function changedText(obj) {
+    console.log("changedText")
+    Firearm.predictText("toxicity", obj.value).then(it => {
+        console.log("===" + modelName + "===")
+        console.log(it[0])
+        console.log(it[1])
+        console.log(it[2])
+        document.getElementById("predict_result").innerHTML = it[0].label;
+    })
 }

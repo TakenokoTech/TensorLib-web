@@ -1,16 +1,18 @@
 import "@tensorflow/tfjs-backend-wasm"
 import * as tfconv from "@tensorflow/tfjs-converter";
 import * as tf from "@tensorflow/tfjs-core";
-import {loadGraphModel, loadLayersModel} from "@tensorflow/tfjs";
+import {loadGraphModel} from "@tensorflow/tfjs";
 import InputType from "../model/InputType";
 import {InputImage} from "../FirearmConfig";
+import {loadTokenizer} from "@tensorflow-models/universal-sentence-encoder";
 
 export class PredictRepository {
     model: tfconv.GraphModel | undefined = undefined;
 
-    async setup(modelName: string): Promise<boolean> {
+    async setup(modelName: string, backendName: string = "wasm"): Promise<boolean> {
+        console.log("setup")
         try {
-            await tf.setBackend("wasm")
+            await tf.setBackend(backendName)
             this.model = await loadGraphModel("indexeddb://" + modelName)
             return true
         } catch (e) {
@@ -43,6 +45,55 @@ export class PredictRepository {
             const logits1001 = this.model?.predict(batched) as tf.Tensor2D;
             const result = tf.slice(logits1001, [0, 1], [-1, 1000]);
             return result
+        })
+    }
+
+    async dryrunText(text: string[]) {
+        console.log("dryrunText")
+        const tokenizer = await loadTokenizer()
+        const encodings = text.map(d => tokenizer.encode(d));
+        const indicesArr = encodings.map((arr, i) => arr.map((d, index) => [i, index]));
+        let flattenedIndicesArr: Array<[number, number]> = [];
+        for (let i = 0; i < indicesArr.length; i++) {
+            flattenedIndicesArr = flattenedIndicesArr.concat(indicesArr[i] as Array<[number, number]>);
+        }
+        const indices = tf.tensor2d(flattenedIndicesArr, [flattenedIndicesArr.length, 2], 'int32');
+        const values = tf.tensor1d(tf.util.flatten(encodings) as number[], 'int32');
+        const modelInputs = {Placeholder_1: indices, Placeholder: values};
+        const labels = await this.model.executeAsync(modelInputs);
+        indices.dispose();
+        values.dispose();
+
+        return (labels as tf.Tensor2D[])
+            .map((d, i) => ({headIndex: i, data: d}))
+            .map(d => {
+                const prediction = d.data.dataSync() as Float32Array;
+                const results = [];
+                for (let input = 0; input < text.length; input++) {
+                    const probabilities = prediction.slice(input * 2, input * 2 + 2);
+                    let match = null;
+                    if (Math.max(probabilities[0], probabilities[1]) > 0.85) {
+                        match = probabilities[0] < probabilities[1];
+                    }
+                    results.push({probabilities, match});
+                    console.log(d.headIndex, probabilities[0], match);
+                }
+                return {label: d.headIndex, results}
+            });
+    }
+
+    predictText(text: number[][]): tf.Tensor {
+        return tf.tidy(() => {
+            /// if (typeof text === 'string') text = [text];
+            // const encodings = text.map(d => await use.embed(d));
+            // const indicesArr = encodings.map((arr, i) => arr.map((d, index) => [i, index]));
+            // let flattenedIndicesArr: Array<[number, number]> = [];
+            // for (let i = 0; i < indicesArr.length; i++) {
+            //     flattenedIndicesArr = flattenedIndicesArr.concat(indicesArr[i] as Array<[number, number]>);
+            // }
+            // const indices = tf.tensor2d(flattenedIndicesArr, [flattenedIndicesArr.length, 2], 'int32');
+            // const values = tf.tensor1d(tf.util.flatten(encodings) as number[], 'int32');
+            return this.model?.executeAsync(text as unknown as tf.Tensor<tf.Rank>) as unknown as tf.Tensor2D
         })
     }
 }
