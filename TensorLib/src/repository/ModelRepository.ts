@@ -8,6 +8,7 @@ export class ModelRepository {
     private network = new NetworkModelDatasource()
 
     async download(modelName: string, modelPath: string): Promise<boolean> {
+        console.log("download", modelName)
         const model = await loadGraphModel(modelPath, { fromTFHub: modelPath.indexOf("tfhub.dev") != -1});
         await model.save("indexeddb://" + modelName)
         model.dispose()

@@ -23,12 +23,14 @@ Firearm.setup({
     // predict("mobilenet2")
     // predict("mobilenet3")
 
-    Firearm.predictText("toxicity", "fack").then(it => {
-        console.log("===" + modelName + "===")
-        console.log(it[0])
-        console.log(it[1])
-        console.log(it[2])
-        document.getElementById("predict_result").innerHTML = it[0].label;
+    Firearm.predictText("toxicity", "We're dudes on computers, moron. You are quite astonishingly stupid.").then(it => {
+        console.log("===" + "toxicity" + "===")
+        it.forEach((n) => console.log(n, n.value < 0.85))
+        document.getElementById("predict_result2").innerHTML = it[it.length-1].label;
+
+        Firearm.predictText("toxicity", "Please stop. If you continue to vandalize Wikipedia, as you did to Kmart, you will be blocked from editing.").then(it => {
+            it.forEach((n) => console.log(n, n.value < 0.85))
+        })
     })
 })
 

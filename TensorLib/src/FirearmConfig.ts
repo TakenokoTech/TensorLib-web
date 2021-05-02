@@ -1,7 +1,7 @@
 import * as tf from "@tensorflow/tfjs-core";
 
 export type InputImage = tf.Tensor | ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
-export type InputText = string | string[]
+export type InputText = string
 
 interface Model {
     name: string,
