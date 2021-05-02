@@ -1,5 +1,7 @@
 import PredictTextRepository from "../repository/predict/PredictTextRepository";
 import {InputText} from "../typealias";
+import * as tf from "@tensorflow/tfjs-core";
+import {toxicity} from "../model/toxicity";
 
 export default class PredictTextUsecase {
     private readonly isFinish: Promise<boolean>;
@@ -15,11 +17,14 @@ export default class PredictTextUsecase {
 
     async execute(text: InputText) {
         console.log("PredictTextUsecase.execute()")
+        console.log("=====> ", tf.memory())
+
         await this.isFinish
         const predictResult = await this.predictRepository.predict([text])
-        const labels = ["攻撃的", "侮辱", "不愉快", "非常に有毒", "性的露骨", "脅威", "毒性"]
+
+        console.log("<===== ", tf.memory())
         return predictResult
-            .map((v, i) => ({index: i, value: v, label: labels[i]}))
+            .map((v, i) => ({index: i, value: v, label: toxicity[i]}))
             .sort((a, b) => b.value - a.value)
     }
 }

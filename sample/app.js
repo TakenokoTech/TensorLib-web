@@ -1,5 +1,6 @@
 const Firearm = TensorLib.Firearm.prototype
 
+/*
 Firearm.setup({
     usedModelList: [{
         name: "mobilenet1",
@@ -25,6 +26,7 @@ Firearm.setup({
     predictText("We're dudes on computers, moron. You are quite astonishingly stupid.")
     predictText("Please stop. If you continue to vandalize Wikipedia, as you did to Kmart, you will be blocked from editing.")
 })
+*/
 
 function predictImage(img, modelName = "mobilenet1") {
     Firearm.predictImage(modelName, img).then(it => {
@@ -46,17 +48,38 @@ function predictText(text, modelName = "toxicity") {
 
 function changedImage(obj) {
     console.log("changedImage")
-    var fileReader = new FileReader()
-    fileReader.readAsDataURL(obj.files[0])
-    fileReader.onload = () => {
-        document.getElementById('sample_image').src = fileReader.result
-        predictImage(document.getElementById('sample_image'), "mobilenet1")
-        predictImage(document.getElementById('sample_image'), "mobilenet2")
-        predictImage(document.getElementById('sample_image'), "mobilenet3")
+    var dom = document.getElementById('sample_image');
+    ((fileReader) => {
+        fileReader.readAsDataURL(obj.files[0])
+        fileReader.onload = () => dom.src = fileReader.result
+    })(new FileReader())
+    var callback = () => {
+        dom.removeEventListener('load', callback)
+        // predictImage(document.getElementById('sample_image'), "mobilenet1")
+        // predictImage(document.getElementById('sample_image'), "mobilenet2")
+        // predictImage(document.getElementById('sample_image'), "mobilenet3")
+        createImageBitmap(dom).then(i => worker.postMessage({cmd: "predict", image: i}))
     }
+    dom.addEventListener('load', callback)
 }
 
 function changedText(obj) {
     console.log("changedText")
     predictText(obj.value)
 }
+
+// WebWorkerを使用
+var worker = new Worker('worker.js')
+worker.postMessage({cmd: "setup"});
+worker.addEventListener('message', (e) => {
+    console.log('Worker reply: ', e.data)
+    switch (e.data.cmd) {
+        case "setup": {
+            var dom = document.getElementById('sample_image')
+            return createImageBitmap(dom).then(img => worker.postMessage({cmd: "predict", image: img}))
+        }
+        case "predict": {
+            return document.getElementById("predict_result").innerHTML = e.data.result;
+        }
+    }
+}, false);

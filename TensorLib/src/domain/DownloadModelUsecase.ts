@@ -9,7 +9,7 @@ export default class DownloadModelUsecase {
     async execute(param: FirearmConfig) {
         console.log("DownloadModelUsecase.execute()")
         const promises = param.usedModelList.map(async (model) => {
-            if (!(await this.predictRepository.setup(model.name))) {
+            if (!(await this.predictRepository.setup(model.name, "webgl"))) {
                 return this.modelRepository.download(model.name, model.path)
             }
         })

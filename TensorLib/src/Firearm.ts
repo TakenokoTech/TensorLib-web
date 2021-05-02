@@ -1,4 +1,4 @@
-import PredictTensorFlowUsecase from "./domain/PredictTensorFlowUsecase";
+import PredictImageUsecase from "./domain/PredictImageUsecase";
 import DownloadModelUsecase from "./domain/DownloadModelUsecase";
 import PredictTextUsecase from "./domain/PredictTextUsecase";
 import FirearmConfig, {FirearmConfigImpl} from "./FirearmConfig";
@@ -16,7 +16,7 @@ export class Firearm {
 
     predictImage(modelName: string, image: InputImage): Promise<any> {
         console.log("predict.", modelName)
-        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictTensorFlowUsecase(modelName, {inputSize: 224})
+        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictImageUsecase(modelName, {inputSize: 224})
         return loadedUsecase[modelName].execute(image)
     }
 
