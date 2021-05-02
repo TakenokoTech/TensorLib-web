@@ -1,21 +1,13 @@
-import * as tf from "@tensorflow/tfjs-core";
+import NamePath from "./model/NamePath";
 
-export type InputImage = tf.Tensor | ImageData | HTMLImageElement | HTMLCanvasElement | HTMLVideoElement
-export type InputText = string
-
-interface Model {
-    name: string,
-    path: string
-}
-
-export interface FirearmConfig {
-    usedModelList: Model[]
-    usedLabelList: Model[]
+export default interface FirearmConfig {
+    usedModelList: NamePath[]
+    usedLabelList: NamePath[]
 }
 
 export class FirearmConfigImpl implements FirearmConfig {
-    usedModelList: Model[];
-    usedLabelList: Model[];
+    usedModelList: NamePath[];
+    usedLabelList: NamePath[];
 
     constructor(config: FirearmConfig) {
         this.usedModelList = config.usedModelList

@@ -19,16 +19,15 @@ Firearm.setup({
         path: "tensorflow/examples/master/lite/examples/image_classification/android/models/src/main/assets/labels.txt"
     }]
 }).then(() => {
-    predictImage("mobilenet1")
-    predictImage("mobilenet2")
-    predictImage("mobilenet3")
+    predictImage(document.getElementById('sample_image'), "mobilenet1")
+    predictImage(document.getElementById('sample_image'), "mobilenet2")
+    predictImage(document.getElementById('sample_image'), "mobilenet3")
     predictText("We're dudes on computers, moron. You are quite astonishingly stupid.")
     predictText("Please stop. If you continue to vandalize Wikipedia, as you did to Kmart, you will be blocked from editing.")
 })
 
-function predictImage(modelName = "mobilenet1") {
-    const img = document.getElementById('sample_image');
-    Firearm.predict(modelName, img).then(it => {
+function predictImage(img, modelName = "mobilenet1") {
+    Firearm.predictImage(modelName, img).then(it => {
         console.log("===" + modelName + "===")
         console.log(it[0])
         console.log(it[1])
@@ -48,11 +47,13 @@ function predictText(text, modelName = "toxicity") {
 function changedImage(obj) {
     console.log("changedImage")
     var fileReader = new FileReader()
-    fileReader.onload = () => document.getElementById('sample_image').src = fileReader.result
     fileReader.readAsDataURL(obj.files[0])
-    predictImage("mobilenet1")
-    predictImage("mobilenet2")
-    predictImage("mobilenet3")
+    fileReader.onload = () => {
+        document.getElementById('sample_image').src = fileReader.result
+        predictImage(document.getElementById('sample_image'), "mobilenet1")
+        predictImage(document.getElementById('sample_image'), "mobilenet2")
+        predictImage(document.getElementById('sample_image'), "mobilenet3")
+    }
 }
 
 function changedText(obj) {

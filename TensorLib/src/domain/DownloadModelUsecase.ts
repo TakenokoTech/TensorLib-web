@@ -1,10 +1,10 @@
-import {FirearmConfig} from "../FirearmConfig";
 import {ModelRepository} from "../repository/ModelRepository";
-import {PredictRepository} from "../repository/PredictRepository";
+import BasePredictRepository from "../repository/predict/BasePredictRepository";
+import FirearmConfig from "../FirearmConfig";
 
-export class DownloadModelUsecase {
+export default class DownloadModelUsecase {
     modelRepository = new ModelRepository()
-    predictRepository = new PredictRepository()
+    predictRepository = new BasePredictRepository()
 
     async execute(param: FirearmConfig) {
         console.log("DownloadModelUsecase.execute()")
