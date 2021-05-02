@@ -34,5 +34,11 @@ module.exports = {
                 to: `${__dirname}/dist`,
             }]
         }),
+        new copy({
+            patterns:[{
+                from: `${__dirname}/sample`,
+                to: `${__dirname}/dist`,
+            }]
+        }),
     ]
 };
