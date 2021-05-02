@@ -4,7 +4,7 @@ import {loadTokenizer} from "@tensorflow-models/universal-sentence-encoder";
 import BasePredictRepository from "./BasePredictRepository";
 
 export default class PredictTextRepository extends BasePredictRepository {
-    tokenizer = loadTokenizer()
+    private tokenizer = loadTokenizer()
 
     async dryrun() {
         const flattenedArr = [[0, 0]]
@@ -34,9 +34,11 @@ export default class PredictTextRepository extends BasePredictRepository {
                 Placeholder: values
             }
         })
+
         const resultTensor = await this.model.executeAsync(input);
         input.Placeholder_1.dispose();
         input.Placeholder.dispose();
+
         return (resultTensor as tf.Tensor2D[])
             .map((data, index) => (data.dataSync() as Float32Array)[0]);
     }

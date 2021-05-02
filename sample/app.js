@@ -29,8 +29,9 @@ Firearm.setup({
 */
 
 function predictImage(img, modelName = "mobilenet1") {
-    Firearm.predictImage(modelName, img).then(it => {
-        console.log("===" + modelName + "===")
+    var setting = {modelName: modelName, inputSize: 224, backendName: "wasm"}
+    Firearm.predictImage(img, setting).then(it => {
+        console.log(`===${setting.modelName}(${setting.backendName})===`)
         console.log(it[0])
         console.log(it[1])
         console.log(it[2])
@@ -39,8 +40,9 @@ function predictImage(img, modelName = "mobilenet1") {
 }
 
 function predictText(text, modelName = "toxicity") {
-    Firearm.predictText(modelName, text).then(it => {
-        console.log("===" + modelName + "===")
+    var setting = {modelName: modelName, backendName: "cpu"}
+    Firearm.predictText(text, setting).then(it => {
+        console.log(`===${setting.modelName}(${setting.backendName})===`)
         it.forEach((n) => console.log(n, n.value < 0.85))
         document.getElementById("predict_result2").innerHTML = it[it.length-1].value < 0.85 ? it[it.length-1].label : "GOOD!";
     })
@@ -55,9 +57,9 @@ function changedImage(obj) {
     })(new FileReader())
     var callback = () => {
         dom.removeEventListener('load', callback)
-        // predictImage(document.getElementById('sample_image'), "mobilenet1")
-        // predictImage(document.getElementById('sample_image'), "mobilenet2")
-        // predictImage(document.getElementById('sample_image'), "mobilenet3")
+        predictImage(document.getElementById('sample_image'), "mobilenet1")
+        predictImage(document.getElementById('sample_image'), "mobilenet2")
+        predictImage(document.getElementById('sample_image'), "mobilenet3")
         createImageBitmap(dom).then(i => worker.postMessage({cmd: "predict", image: i}))
     }
     dom.addEventListener('load', callback)

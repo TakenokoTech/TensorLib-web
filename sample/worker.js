@@ -34,8 +34,9 @@ function setup() {
 }
 
 function predict(image) {
-    Firearm.predictImage("mobilenet1", image).then(it => {
-        console.log("===" + "mobilenet1" + "===")
+    var setting = {modelName: "mobilenet1", inputSize: 224, backendName: "webgl"}
+    Firearm.predictImage(image, setting).then(it => {
+        console.log(`===${setting.modelName}(${setting.backendName})===`)
         console.log(it[0])
         console.log(it[1])
         console.log(it[2])

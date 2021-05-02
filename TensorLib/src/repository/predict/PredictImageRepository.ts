@@ -20,18 +20,16 @@ export default class PredictImageRepository extends BasePredictRepository {
             const inputMin = -1
             const normalizationConstant = (inputMax - inputMin) / 255.0;
             const normalized: tf.Tensor3D = tf.add(tf.mul(tf.cast(image, 'float32'), normalizationConstant), inputMin);
-
-            let resized = normalized;
-            if (image.shape[0] !== inputType.inputSize || image.shape[1] !== inputType.inputSize) {
-                resized = tf.image.resizeBilinear(normalized, [inputType.inputSize, inputType.inputSize], true);
-            }
+            const resized = tf.image.resizeBilinear(normalized, [inputType.inputSize, inputType.inputSize], true)
             const batched = tf.reshape(resized, [-1, inputType.inputSize, inputType.inputSize, 3]);
             const resultTensor = this.model?.predict(batched) as tf.Tensor2D;
             return tf.slice(resultTensor, [0, 1], [-1, 1000]);
         })
 
         const softmax = tf.softmax(result);
-        const values = await softmax.data();
+        const values = await softmax.dataSync();
+        // console.log(await result.data())
+        // console.log(await softmax.data())
         softmax.dispose();
         result.dispose()
 

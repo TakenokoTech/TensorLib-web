@@ -1,7 +1,7 @@
 import PredictImageUsecase from "./domain/PredictImageUsecase";
 import DownloadModelUsecase from "./domain/DownloadModelUsecase";
 import PredictTextUsecase from "./domain/PredictTextUsecase";
-import FirearmConfig, {FirearmConfigImpl} from "./FirearmConfig";
+import FirearmConfig from "./FirearmConfig";
 import {InputImage, InputText} from "./typealias";
 import PredictSetting from "./model/PredictSetting";
 
@@ -10,20 +10,22 @@ const loadedUsecase = {}
 export class Firearm {
     setup(config: FirearmConfig): Promise<any> {
         console.log("setup.", config)
-        const configImpl = new FirearmConfigImpl(config)
-        if(!configImpl.isReady()) throw Error("error in FirearmConfig.")
+        const usedModelList = config.usedModelList || []
+        if(usedModelList.length < 1) throw Error("error in FirearmConfig.")
         return new DownloadModelUsecase().execute(config)
     }
 
-    predictImage(modelName: string, image: InputImage, setting: PredictSetting = {inputSize: 224, backendName: "webgl"}): Promise<any> {
-        console.log("predict.", modelName)
-        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictImageUsecase(modelName, setting)
-        return loadedUsecase[modelName].execute(image)
+    predictImage(image: InputImage, setting: PredictSetting = {modelName: "", inputSize: 224, backendName: "webgl"}): Promise<any> {
+        console.log("predict.", setting.modelName)
+        const key = JSON.stringify(setting)
+        loadedUsecase[key] = loadedUsecase[key] || new PredictImageUsecase(setting)
+        return loadedUsecase[key].execute(image)
     }
 
-    predictText(modelName: string, text: InputText, setting: PredictSetting = {backendName: "cpu"}): Promise<any> {
-        console.log("predict.", modelName)
-        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictTextUsecase(modelName, setting)
-        return loadedUsecase[modelName].execute(text)
+    predictText(text: InputText, setting: PredictSetting = {modelName: "", backendName: "cpu"}): Promise<any> {
+        console.log("predict.", setting.modelName)
+        const key = JSON.stringify(setting)
+        loadedUsecase[key] = loadedUsecase[key] || new PredictTextUsecase(setting)
+        return loadedUsecase[key].execute(text)
     }
 }
