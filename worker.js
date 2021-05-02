@@ -1,4 +1,4 @@
-importScripts('../dist/tensor-lib.js');
+importScripts('./tensor-lib.js');
 const Firearm = TensorLib.Firearm.prototype
 
 self.addEventListener('message',(e) => {
