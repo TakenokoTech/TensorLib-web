@@ -19,22 +19,14 @@ Firearm.setup({
         path: "tensorflow/examples/master/lite/examples/image_classification/android/models/src/main/assets/labels.txt"
     }]
 }).then(() => {
-    // predict("mobilenet1")
-    // predict("mobilenet2")
-    // predict("mobilenet3")
-
-    Firearm.predictText("toxicity", "We're dudes on computers, moron. You are quite astonishingly stupid.").then(it => {
-        console.log("===" + "toxicity" + "===")
-        it.forEach((n) => console.log(n, n.value < 0.85))
-        document.getElementById("predict_result2").innerHTML = it[it.length-1].label;
-
-        Firearm.predictText("toxicity", "Please stop. If you continue to vandalize Wikipedia, as you did to Kmart, you will be blocked from editing.").then(it => {
-            it.forEach((n) => console.log(n, n.value < 0.85))
-        })
-    })
+    predictImage("mobilenet1")
+    predictImage("mobilenet2")
+    predictImage("mobilenet3")
+    predictText("We're dudes on computers, moron. You are quite astonishingly stupid.")
+    predictText("Please stop. If you continue to vandalize Wikipedia, as you did to Kmart, you will be blocked from editing.")
 })
 
-function predict(modelName = "mobilenet1") {
+function predictImage(modelName = "mobilenet1") {
     const img = document.getElementById('sample_image');
     Firearm.predict(modelName, img).then(it => {
         console.log("===" + modelName + "===")
@@ -45,23 +37,25 @@ function predict(modelName = "mobilenet1") {
     })
 }
 
+function predictText(text, modelName = "toxicity") {
+    Firearm.predictText(modelName, text).then(it => {
+        console.log("===" + modelName + "===")
+        it.forEach((n) => console.log(n, n.value < 0.85))
+        document.getElementById("predict_result2").innerHTML = it[it.length-1].value < 0.85 ? it[it.length-1].label : "GOOD!";
+    })
+}
+
 function changedImage(obj) {
     console.log("changedImage")
     var fileReader = new FileReader()
     fileReader.onload = () => document.getElementById('sample_image').src = fileReader.result
     fileReader.readAsDataURL(obj.files[0])
-    predict("mobilenet1")
-    predict("mobilenet2")
-    predict("mobilenet3")
+    predictImage("mobilenet1")
+    predictImage("mobilenet2")
+    predictImage("mobilenet3")
 }
 
 function changedText(obj) {
     console.log("changedText")
-    Firearm.predictText("toxicity", obj.value).then(it => {
-        console.log("===" + modelName + "===")
-        console.log(it[0])
-        console.log(it[1])
-        console.log(it[2])
-        document.getElementById("predict_result").innerHTML = it[0].label;
-    })
+    predictText(obj.value)
 }

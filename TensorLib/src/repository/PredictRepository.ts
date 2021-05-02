@@ -10,12 +10,12 @@ export class PredictRepository {
     model: tfconv.GraphModel | undefined = undefined;
 
     async setup(modelName: string, backendName: string = "wasm"): Promise<boolean> {
-        console.log("setup", modelName)
         try {
             await tf.setBackend(backendName)
             this.model = await loadGraphModel("indexeddb://" + modelName)
             return true
         } catch (e) {
+            console.error("setup model failed.", e)
             return false
         }
     }
@@ -48,36 +48,21 @@ export class PredictRepository {
         })
     }
 
-    async dryrunText(text: string[]) {
-        console.log("dryrunText", text)
-        const tokenizer = await loadTokenizer()
-        const encodings = text.map(d => tokenizer.encode(d));
-        const flattenedArr = encodings
-            .map((arr, i) => arr.map((d, index) => [i, index]))
-            .flatMap((arr, i) => arr as Array<[number, number]>)
+    async dryrunText() {
+        const flattenedArr = [[0, 0]]
         const indices = tf.tensor2d(flattenedArr, [flattenedArr.length, 2], 'int32');
-        const values = tf.tensor1d(tf.util.flatten(encodings) as number[], 'int32');
+        const values = tf.tensor1d(tf.util.flatten([[]]) as number[], 'int32');
         const labels = await this.model.executeAsync({
             Placeholder_1: indices,
             Placeholder: values
         });
         indices.dispose();
         values.dispose();
-
         return (labels as tf.Tensor2D[])
-            .map((data, index) => {
-                const prediction = data.dataSync() as Float32Array;
-                const results = text.map((_, index) => {
-                    const p = prediction.slice(index * 2, index * 2 + 2);
-                    const match = Math.max(p[0], p[1]) > 0.85 ? p[0] < p[1] : null;
-                    return {p, match}
-                })
-                return {label: index, results}
-            });
+            .map((data, index) => data.dataSync() as Float32Array)
     }
 
     async predictText(text: string[]): Promise<number[]> {
-        console.log("dryrunText", text)
         const tokenizer = await loadTokenizer()
         const encodings = text.map(d => tokenizer.encode(d));
         const flattenedArr = encodings
@@ -91,7 +76,6 @@ export class PredictRepository {
         });
         indices.dispose();
         values.dispose();
-
         return (labels as tf.Tensor2D[])
             .map((data, index) => (data.dataSync() as Float32Array)[0]);
     }
