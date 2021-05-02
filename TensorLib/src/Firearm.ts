@@ -3,6 +3,7 @@ import DownloadModelUsecase from "./domain/DownloadModelUsecase";
 import PredictTextUsecase from "./domain/PredictTextUsecase";
 import FirearmConfig, {FirearmConfigImpl} from "./FirearmConfig";
 import {InputImage, InputText} from "./typealias";
+import PredictSetting from "./model/PredictSetting";
 
 const loadedUsecase = {}
 
@@ -14,15 +15,15 @@ export class Firearm {
         return new DownloadModelUsecase().execute(config)
     }
 
-    predictImage(modelName: string, image: InputImage): Promise<any> {
+    predictImage(modelName: string, image: InputImage, setting: PredictSetting = {inputSize: 224, backendName: "webgl"}): Promise<any> {
         console.log("predict.", modelName)
-        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictImageUsecase(modelName, {inputSize: 224})
+        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictImageUsecase(modelName, setting)
         return loadedUsecase[modelName].execute(image)
     }
 
-    predictText(modelName: string, text: InputText): Promise<any> {
+    predictText(modelName: string, text: InputText, setting: PredictSetting = {backendName: "cpu"}): Promise<any> {
         console.log("predict.", modelName)
-        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictTextUsecase(modelName)
+        loadedUsecase[modelName] = loadedUsecase[modelName] || new PredictTextUsecase(modelName, setting)
         return loadedUsecase[modelName].execute(text)
     }
 }

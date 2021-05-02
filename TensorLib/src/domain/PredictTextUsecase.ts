@@ -2,14 +2,17 @@ import PredictTextRepository from "../repository/predict/PredictTextRepository";
 import {InputText} from "../typealias";
 import * as tf from "@tensorflow/tfjs-core";
 import {toxicity} from "../model/toxicity";
+import PredictSetting from "../model/PredictSetting";
 
 export default class PredictTextUsecase {
+    private readonly setting: PredictSetting
     private readonly isFinish: Promise<boolean>;
     private predictRepository = new PredictTextRepository()
 
-    constructor(modelName: string) {
+    constructor(modelName: string, setting: PredictSetting) {
+        this.setting = setting
         this.isFinish = new Promise(async (resolve) => {
-            await this.predictRepository.setup(modelName, "cpu")
+            await this.predictRepository.setup(modelName, setting.backendName)
             await this.predictRepository.dryrun()
             resolve(true)
         })

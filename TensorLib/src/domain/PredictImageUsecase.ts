@@ -1,18 +1,18 @@
 import PredictImageRepository from "../repository/predict/PredictImageRepository";
 import * as tf from "@tensorflow/tfjs-core";
 import {classes} from "../model/classes";
-import InputType from "../model/InputType";
 import {InputImage} from "../typealias";
+import PredictSetting from "../model/PredictSetting";
 
 export default class PredictImageUsecase {
-    private readonly setting: InputType
+    private readonly setting: PredictSetting
     private readonly isFinish: Promise<boolean>;
     private predictRepository = new PredictImageRepository()
     
-    constructor(modelName: string, setting: InputType) {
+    constructor(modelName: string, setting: PredictSetting) {
         this.setting = setting
         this.isFinish = new Promise(async (resolve) => {
-            await this.predictRepository.setup(modelName, "webgl")
+            await this.predictRepository.setup(modelName, setting.backendName)
             await this.predictRepository.dryrun(setting)
             resolve(true)
         })

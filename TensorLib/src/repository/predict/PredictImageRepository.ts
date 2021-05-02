@@ -1,9 +1,9 @@
 import "@tensorflow/tfjs-backend-wasm"
 import * as tf from "@tensorflow/tfjs-core";
-import InputType from "../../model/InputType";
 import BasePredictRepository from "./BasePredictRepository";
 import {InputImage} from "../../typealias";
 import {toArray} from "../../utils/ArrayUtils";
+import InputType from "../../model/PredictSetting";
 
 export default class PredictImageRepository extends BasePredictRepository {
     async dryrun(inputType: InputType) {
